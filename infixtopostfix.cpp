@@ -1,70 +1,59 @@
-#include <stdio.h>
-#include <string.h>
+#include<stdio.h>
 #include <ctype.h>
-
-char input[10];
-int i, error;
-void E();
-void T();
-void Eprime();
-void Tprime();
-void F();
-main()
-{
-    i = 0;
-    error = 0;
-    printf("Enter an arithmetic expression   :  ");
-    gets(input);
-    E();
-    if (strlen(input) == i && error == 0)
-        printf("\nAccepted..!!!\n");
-    else
-        printf("\nRejected..!!!\n");
+char stack[50];
+int top=-1;
+void push(char item) {
+    stack[++top] = item;
 }
-
-void E()
-{
-    T();
-    Eprime();
-}
-void Eprime()
-{
-    if (input[i] == '+')
-    {
-        i++;
-        T();
-        Eprime();
+char pop() {
+    if (top==-1) {
+        return -1;
+    }
+    else {
+        return stack[top--];
     }
 }
-void T()
+int priority(char p)
 {
-    F();
-    Tprime();
+    if (p == '(')
+        return 0;
+    if (p == '+' || p == '-')
+        return 1;
+    if (p == '*' || p == '/')
+        return 2;
 }
-void Tprime()
-{
-    if (input[i] == '*')
-    {
-        i++;
-        F();
-        Tprime();
-    }
-}
-void F()
-{
-    if (isalnum(input[i]))
-        i++;
-    else if (input[i] == '(')
-    {
-        i++;
-        E();
-        if (input[i] == ')')
-            i++;
-
+int main() {
+    char i, str[50];
+    printf("Enter infix expression:");
+    scanf(" %s", str);
+    char *ptr=str;
+    while (*ptr != '\0') {
+        if (isalnum(*ptr)) {
+            printf("%c", *ptr);
+        }
+        else if (*ptr == '(')
+            push(*ptr);
+        else if (*ptr == ')')
+        {
+            while ((i = pop()) != '(')
+                printf("%c", i);
+        }
         else
-            error = 1;
+        {
+            while (priority(stack[top]) >= priority(*ptr)) {
+                printf("%c", pop());
+            }
+            push(*ptr);
+        }
+        ptr++;
     }
+    while (top != -1)
+    {
+        printf("%c", pop());
+    }
+    return 0;
 
-    else
-        error = 1;
 }
+
+
+
